@@ -8,16 +8,20 @@ use Illuminate\Http\Request;
 class ShopController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    * Display a listing of the resource.
+    *
+    * @return \Illuminate\Http\Response
+    */
     public function index()
     {
         $shops = Shop::all();
-        return view('shops.index', compact('shops'));
+        
+      // 取得したデータの中心地を求める
+        $latitude = $shops->average('latitude');
+        $longitude = $shops->average('longitude');
+        $zoom = 5;
+        return view('shops.index', compact('shops', 'latitude', 'longitude', 'zoom'));
     }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -25,9 +29,12 @@ class ShopController extends Controller
      */
     public function create()
     {
-        return view('shops.create');
+      // 最初に表示したい座標(今回は東京タワー)
+        $latitude = 35.658584;
+        $longitude = 139.7454316;
+        $zoom = 10;
+        return view('shops.create', compact('latitude', 'longitude', 'zoom'));
     }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -37,15 +44,16 @@ class ShopController extends Controller
     public function store(Request $request)
     {
         $shop = new Shop();
+
         $shop->name = $request->name;
         $shop->description = $request->description;
         $shop->address = $request->address;
         $shop->latitude = $request->latitude;
         $shop->longitude = $request->longitude;
         $shop->save();
+
         return redirect()->route('shops.index');
     }
-
     /**
      * Display the specified resource.
      *
@@ -54,9 +62,11 @@ class ShopController extends Controller
      */
     public function show(Shop $shop)
     {
-        return view('shops.show', compact('shop'));
+        $latitude = $shop->latitude;
+        $longitude = $shop->longitude;
+        $zoom = 12;
+        return view('shops.show', compact('shop', 'latitude', 'longitude', 'zoom'));
     }
-
     /**
      * Show the form for editing the specified resource.
      *
@@ -65,9 +75,11 @@ class ShopController extends Controller
      */
     public function edit(Shop $shop)
     {
-        return view('shops.edit', compact('shop'));
+        $latitude = $shop->latitude;
+        $longitude = $shop->longitude;
+        $zoom = 12;
+        return view('shops.edit', compact('shop', 'latitude', 'longitude', 'zoom'));
     }
-
     /**
      * Update the specified resource in storage.
      *
@@ -85,7 +97,6 @@ class ShopController extends Controller
         $shop->save();
         return redirect()->route('shops.index');
     }
-
     /**
      * Remove the specified resource from storage.
      *
