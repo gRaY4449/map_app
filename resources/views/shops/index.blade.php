@@ -7,5 +7,10 @@
             <li><a href="{{ route('shops.show', $shop) }}">{{ $shop->name }}</a></li>
         @endforeach
     </ul>
-    <a href="{{ route('shops.create') }}">create</a>
+    <div id="map" style="height:50vh;"></div>
+    <button type="button" onclick="location.href='{{ route('shops.create') }}'">登録</button>
+@endsection
+
+@section('script')
+    @include('partial.map')
 @endsection
